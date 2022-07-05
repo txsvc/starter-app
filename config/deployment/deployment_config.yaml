@@ -21,7 +21,7 @@ items:
             failurePolicy: Abort
             execNewPod:
               command:
-                - ./bin/migrate-database.sh
+                - ./bin/rollout.sh
               containerName: starter-app
         resources: {}
         activeDeadlineSeconds: 21600
@@ -43,12 +43,10 @@ items:
       
       selector:
         app: starter-app
-        deploymentconfig: starter-app
       template:
         metadata:
           labels:
             app: starter-app
-            deploymentconfig: starter-app
         spec:
           containers:
             - name: starter-app
@@ -69,7 +67,7 @@ items:
                       key: rails-serve-static-files
                 
                 - name: DATABASE_SERVICE_NAME
-                  value: starter-app-pg-svc
+                  value: postgresql
 
                 - name: POSTGRESQL_USER
                   valueFrom:

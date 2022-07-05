@@ -4,7 +4,7 @@ items:
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
-      name: starter-app-pg
+      name: postgresql
       labels:
         app: starter-app
     spec:
@@ -21,7 +21,7 @@ items:
           imageChangeParams:
             automatic: true
             containerNames:
-              - starter-app-pg
+              - postgresql
             from:
               kind: ImageStreamTag
               namespace: openshift
@@ -31,13 +31,13 @@ items:
       revisionHistoryLimit: 10
       test: false
       selector:
-        name: starter-app-pg
+        name: postgresql
       
       template:
         metadata:
-          name: starter-app-pg
+          name: postgresql
           labels:
-            name: starter-app-pg
+            name: postgresql
         spec:
           volumes:
             - name: starter-app-pg-data
@@ -45,7 +45,7 @@ items:
                 claimName: starter-app-pg
           
           containers:
-            - name: starter-app-pg
+            - name: postgresql
               
               env:
                 - name: POSTGRESQL_USER
@@ -114,14 +114,14 @@ items:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: starter-app-pg-svc
+      name: postgresql
       labels:
         app: starter-app
     spec:
       ipFamilies:
         - IPv4
       ports:
-        - name: starter-app-pg-svc
+        - name: postgresql
           protocol: TCP
           port: 5432
           targetPort: 5432
@@ -130,7 +130,7 @@ items:
       ipFamilyPolicy: SingleStack
       sessionAffinity: None
       selector:
-        name: starter-app-pg
+        name: postgresql
 
   - kind: PersistentVolumeClaim
     apiVersion: v1
