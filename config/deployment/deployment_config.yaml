@@ -85,6 +85,12 @@ items:
                   value: '100'
                 - name: POSTGRESQL_SHARED_BUFFERS
                   value: 12MB
+                
+                # unset RAKE_DB_MIGRATE to avoid rake db:migrate running on a pod rollout
+                - name: RAKE_DB_MIGRATE
+                  value: 'yes'
+                #- name: RAKE_EXTRA_TASKS
+                #  value: '--tasks'
 
               resources:
                 limits:
