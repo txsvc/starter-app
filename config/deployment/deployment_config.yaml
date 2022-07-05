@@ -14,13 +14,15 @@ items:
         app.openshift.io/runtime-version: 3.0-ubi7
     spec:
       strategy:
-        type: Rolling
-        rollingParams:
-          updatePeriodSeconds: 1
-          intervalSeconds: 1
+        type: Recreate
+        recreateParams:
           timeoutSeconds: 600
-          maxUnavailable: 25%
-          maxSurge: 25%
+          pre:
+            failurePolicy: Abort
+            execNewPod:
+              command:
+                - ./bin/migrate-database.sh
+              containerName: starter-app
         resources: {}
         activeDeadlineSeconds: 21600
       
@@ -53,6 +55,8 @@ items:
               image: starter-app:latest
               
               env:
+                - name: RAILS_ENV
+                  value: production
                 - name: RAILS_MASTER_KEY
                   valueFrom:
                     secretKeyRef:
@@ -63,15 +67,56 @@ items:
                     configMapKeyRef:
                       name: starter-app-deployment-config-map
                       key: rails-serve-static-files
-              
-              resources: {}
-              #resources:
-              #  limits:
+                
+                - name: DATABASE_SERVICE_NAME
+                  value: starter-app-pg-svc
+
+                - name: POSTGRESQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: starter-app-secrets
+                      key: database-user
+                - name: POSTGRESQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: starter-app-secrets
+                      key: database-password
+                - name: POSTGRESQL_DATABASE
+                  value: root
+                - name: POSTGRESQL_MAX_CONNECTIONS
+                  value: '100'
+                - name: POSTGRESQL_SHARED_BUFFERS
+                  value: 12MB
+
+              resources:
+                limits:
+                  memory: 512Mi
               #    cpu: "2"
-              #    memory: 8Gi
               #  requests:
               #    cpu: "1"
               #    memory: 4Gi
+              
+              #readinessProbe:
+              #  httpGet:
+              #    path: /articles
+              #    port: 8080
+              #    scheme: HTTP
+              #  initialDelaySeconds: 5
+              #  timeoutSeconds: 3
+              #  periodSeconds: 10
+              #  successThreshold: 1
+              #  failureThreshold: 3
+
+              #livenessProbe:
+              #  httpGet:
+              #    path: /articles
+              #    port: 8080
+              #    scheme: HTTP
+              #  initialDelaySeconds: 10
+              #  timeoutSeconds: 3
+              #  periodSeconds: 10
+              #  successThreshold: 1
+              #  failureThreshold: 3
               
               ports:
                 - containerPort: 8080

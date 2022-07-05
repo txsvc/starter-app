@@ -4,6 +4,9 @@ ASSEMBLE_SCRIPT="/usr/libexec/s2i/assemble"
 
 pushd /tmp/src || exit 1
 
+echo "---> Replacing 'database.yaml' ..."
+cp -f config/deployment/database.yaml config/database.yaml 
+
 echo "---> Building your Ruby application from source ..."
 if [ -f Gemfile ]; then
   if [ -n "$BUNDLE_REBUILD" ]; then

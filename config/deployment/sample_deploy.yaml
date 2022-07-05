@@ -1,0 +1,126 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  annotations:
+    description: Defines how to deploy the application server
+    template.alpha.openshift.io/wait-for-ready: 'true'
+  resourceVersion: '162759'
+  name: rails-pgsql-persistent
+  
+  labels:
+    app: rails-pgsql-persistent
+    template: rails-pgsql-persistent
+    template.openshift.io/template-instance-owner: dccf9802-60c8-40a6-a85e-00d8c70c1b48
+spec:
+  strategy:
+    type: Recreate
+    recreateParams:
+      timeoutSeconds: 600
+      pre:
+        failurePolicy: Abort
+        execNewPod:
+          command:
+            - ./migrate-database.sh
+          containerName: rails-pgsql-persistent
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - rails-pgsql-persistent
+        from:
+          kind: ImageStreamTag
+          namespace: rails1
+          name: 'rails-pgsql-persistent:latest'
+        lastTriggeredImage: >-
+          image-registry.openshift-image-registry.svc:5000/rails1/rails-pgsql-persistent@sha256:b0617c2103b67e12978edd88919fc64ef76201152442131e5d31647fc8014ea5
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    name: rails-pgsql-persistent
+  template:
+    metadata:
+      name: rails-pgsql-persistent
+      creationTimestamp: null
+      labels:
+        name: rails-pgsql-persistent
+    spec:
+      containers:
+        - resources:
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /articles
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: rails-pgsql-persistent
+          livenessProbe:
+            httpGet:
+              path: /articles
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: DATABASE_SERVICE_NAME
+              value: postgresql
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rails-pgsql-persistent
+                  key: database-user
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rails-pgsql-persistent
+                  key: database-password
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: rails-pgsql-persistent
+                  key: keybase
+            - name: POSTGRESQL_DATABASE
+              value: root
+            - name: POSTGRESQL_MAX_CONNECTIONS
+              value: '100'
+            - name: POSTGRESQL_SHARED_BUFFERS
+              value: 12MB
+            - name: APPLICATION_DOMAIN
+            - name: APPLICATION_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rails-pgsql-persistent
+                  key: application-user
+            - name: APPLICATION_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rails-pgsql-persistent
+                  key: application-password
+            - name: RAILS_ENV
+              value: production
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          terminationMessagePolicy: File
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/rails1/rails-pgsql-persistent@sha256:b0617c2103b67e12978edd88919fc64ef76201152442131e5d31647fc8014ea5
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
