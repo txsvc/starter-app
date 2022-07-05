@@ -50,7 +50,10 @@ oc apply -f secrets.yaml
 oc apply -f build_config_map.yaml
 oc apply -f build_config.yaml
 
-# deploy
+# deploy database
+oc apply -f pg_deployment_config.yaml
+
+# deploy app
 oc apply -f deployment_config_map.yaml
 oc apply -f deployment_config.yaml
 
