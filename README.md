@@ -1,24 +1,51 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+'starter-app' is a minimal rails app with most gems skipped.
 
-Things you may want to cover:
+It includes application gems like:
 
-* Ruby version
+* [High Voltage](https://github.com/thoughtbot/high_voltage) for static pages
+* [appengine-ruby](https://github.com/GoogleCloudPlatform/appengine-ruby) optional integration library for the Ruby runtime for Google App Engine
 
-* System dependencies
+And development gems like:
 
-* Configuration
+* [RuboCop](https://github.com/rubocop/rubocop) for static code analysis and formatting
 
-* Database creation
+Possible future add-ons:
 
-* Database initialization
+* [prometheus_exporter](https://github.com/thoughtbot/prometheus_exporter) for collecting and aggregating prometheus metrics
 
-* How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
+## Build and deploy
 
-* Deployment instructions
+See [config/deployment](config/deployment) for details.
 
-* ...
+
+## References
+
+* [Ruby runtimes on Google App Engine](https://cloud.google.com/appengine/docs/standard/ruby/runtime)
+* [sclorg/rails-ex](https://github.com/sclorg/rails-ex) deployment on Red Hat OpenShift
+
+
+## Other
+
+### Setup
+
+#### Initial creation
+
+```shell
+rails new . --minimal
+```
+
+#### Checks before committing
+
+```shell
+bundler exec rubocop -a
+```
+
+#### Credentials etc ...
+
+```shell
+bundler rails credentials:edit
+
+```

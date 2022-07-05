@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: starter-app-deployment-config-map
+  labels:
+    app-owner: starter-app
+data:
+  # ENV['RAILS_SERVE_STATIC_FILES']
+  rails-serve-static-files: x
+  #RAILS_MIN_THREADS
+  #RAILS_MAX_THREADS
+  #PORT
