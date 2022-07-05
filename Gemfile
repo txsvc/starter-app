@@ -25,7 +25,7 @@ gem 'high_voltage', '~> 3.1'
 
 group :production do
   # Support postgresql as a database for Active Record (in production)
-  gem 'pg', '~> 1.2'
+  gem 'pg', '1.2.3'
 end
 
 group :development, :test do
