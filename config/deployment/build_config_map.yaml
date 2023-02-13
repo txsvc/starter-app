@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: starter-app-build-config-map
   labels:
-    app-owner: starter-app
+    app: starter-app
 data:
   bundle-rebuild: x
   #ENV['BUNDLE_WITHOUT']

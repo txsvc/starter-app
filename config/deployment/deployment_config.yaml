@@ -11,7 +11,6 @@ items:
         app.kubernetes.io/instance: starter-app
         app.kubernetes.io/name: starter-app
         app.openshift.io/runtime: ruby
-        app.openshift.io/runtime-version: 3.0-ubi7
     spec:
       strategy:
         type: Recreate
@@ -60,6 +59,18 @@ items:
                     secretKeyRef:
                       name: starter-app-secrets
                       key: rails-master-key
+                
+                - name: APPLICATION_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: starter-app-secrets
+                      key: application-user
+                - name: APPLICATION_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: starter-app-secrets
+                      key: application-password
+
                 - name: RAILS_SERVE_STATIC_FILES
                   valueFrom:
                     configMapKeyRef:
@@ -146,7 +157,6 @@ items:
         app.kubernetes.io/instance: starter-app
         app.kubernetes.io/name: starter-app
         app.openshift.io/runtime: ruby
-        app.openshift.io/runtime-version: 3.0-ubi7
     spec:
       ipFamilies:
         - IPv4
@@ -173,7 +183,6 @@ items:
         app.kubernetes.io/instance: starter-app
         app.kubernetes.io/name: starter-app
         app.openshift.io/runtime: ruby
-        app.openshift.io/runtime-version: 3.0-ubi7
     spec:
       to:
         kind: Service
